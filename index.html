@@ -66,7 +66,7 @@
             <button id="undo" class="small" disabled>−1</button>
             <button id="reset" class="small">Reset</button>
             <button id="sound" class="small">Sound: On</button>
-            <button id="countdown" class="small">3s Countdown: On</button>
+            <button id="countdown" class="small">Countdown: On</button>
             <button id="resetBest" class="small danger">Reset Best</button>
         </div>
 
@@ -220,7 +220,7 @@
 
     els.countdown.addEventListener('pointerdown', onPrimary(() => {
         countdownEnabled = !countdownEnabled;
-        els.countdown.textContent = `3s Countdown: ${countdownEnabled ? 'On' : 'Off'}`;
+        els.countdown.textContent = `Countdown: ${countdownEnabled ? 'On' : 'Off'}`;
     }));
 
     // Keyboard: Space to count, - to undo, Enter to start
