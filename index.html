@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1" />
     <title>Reading Counter</title>
     <meta name="theme-color" content="#0b1020">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,12 +10,10 @@
     <!-- simple emoji favicon so it looks app-y without extra files -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%93%96%3C/text%3E%3C/svg%3E">
     <style>
-        :root {
-            --bg: #0b1020; --card: #141a2f; --text: #e6e8ef; --muted: #8f98b7; --accent: #5eead4; --danger: #f87171;
-        }
-        html, body { height: 100%; }
-        body { margin: 0; font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: radial-gradient(1200px 800px at 50% -10%, #1b2341 0%, var(--bg) 60%); color: var(--text); -webkit-tap-highlight-color: transparent; }
-        .wrap { min-height: 100%; display: grid; place-items: center; padding: 16px; }
+        :root { --bg: #0b1020; --card: #141a2f; --text: #e6e8ef; --muted: #8f98b7; --accent: #5eead4; --danger: #f87171; }
+        html, body { height: 100%; overflow: hidden; }
+        body { margin: 0; font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: radial-gradient(1200px 800px at 50% -10%, #1b2341 0%, var(--bg) 60%); color: var(--text); -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+        .wrap { min-height: 100dvh; display: grid; place-items: center; padding: 16px; }
         .card { width: min(720px, 100%); background: color-mix(in hsl, var(--card), black 8%); border: 1px solid color-mix(in hsl, var(--card), white 8%); border-radius: 20px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
         h1 { margin: 6px 0 2px; font-size: 22px; font-weight: 800; letter-spacing: .2px; }
         .tag { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
@@ -25,16 +23,17 @@
         .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
         .ring { position: relative; height: 10px; background: #1a2141; border-radius: 999px; overflow: hidden; }
         .bar { position: absolute; inset: 0; width: 100%; transform-origin: left; background: linear-gradient(90deg, var(--accent), #60a5fa); }
-        .tap { margin-top: 12px; width: 100%; height: 46vh; min-height: 260px; touch-action: manipulation; border: none; border-radius: 18px; background: linear-gradient(180deg, #1e2649, #121735); color: var(--text); font-size: clamp(28px, 6vw, 42px); font-weight: 900; letter-spacing: .3px; box-shadow: inset 0 0 0 1px #2a3566, 0 10px 24px rgba(0,0,0,.4); transition: transform .02s ease, filter .2s ease, opacity .2s ease; }
+        .tap { margin-top: 12px; width: 100%; height: 40dvh; min-height: 220px; touch-action: manipulation; border: none; border-radius: 18px; background: linear-gradient(180deg, #1e2649, #121735); color: var(--text); font-size: clamp(28px, 6vw, 42px); font-weight: 900; letter-spacing: .3px; box-shadow: inset 0 0 0 1px #2a3566, 0 10px 24px rgba(0,0,0,.4); transition: transform .02s ease, filter .2s ease, opacity .2s ease; }
         .tap:active { transform: scale(.995); }
         .tap[disabled] { opacity: .35; }
-        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
-        button.small { border: 1px solid #2a3566; background: #1b2345; color: var(--text); padding: 12px; border-radius: 12px; font-weight: 700; letter-spacing: .2px; }
+        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+        button.small { border: 1px solid #2a3566; background: #1b2345; color: var(--text); padding: 12px; border-radius: 12px; font-weight: 700; letter-spacing: .2px; font-size: 16px; touch-action: manipulation; }
         button.small.primary { border-color: color-mix(in hsl, var(--accent), white 15%); background: color-mix(in hsl, #0e1d28, var(--accent) 20%); }
         button.small.danger { border-color: color-mix(in hsl, var(--danger), white 15%); background: color-mix(in hsl, #281015, var(--danger) 18%); }
         .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-top: 8px; }
         .result { margin-top: 10px; text-align: center; color: var(--muted); font-size: 14px; min-height: 22px; }
         .hint { text-align: center; color: var(--muted); font-size: 12px; }
+        @media (max-height: 700px) { .tap { height: 36dvh; } }
     </style>
 </head>
 <body>
@@ -71,7 +70,7 @@
 
         <div class="row">
             <button id="countdown" class="small">3s Countdown: On</button>
-            <div class="hint">Result shows at the end. Phone will beep and vibrate.</div>
+            <div class="hint">Result shows at the end. Phone will beep.</div>
         </div>
 
         <div id="result" class="result"></div>
@@ -127,10 +126,7 @@
         els.tap.disabled = true;
         els.start.disabled = false;
         const wpm = count; // 60s window, so count == WPM
-        if (wpm > bestWpm) {
-            bestWpm = wpm;
-            localStorage.setItem('rc_best', String(bestWpm));
-        }
+        if (wpm > bestWpm) { bestWpm = wpm; localStorage.setItem('rc_best', String(bestWpm)); }
         els.result.textContent = `Result: ${wpm} WPM (words read: ${count})`;
         updateUI(0);
         if (beepEnabled) beep(880, 400);
@@ -146,44 +142,33 @@
     }
 
     function beginRun() {
-        running = true;
-        count = 0;
-        els.result.textContent = '';
-        els.tap.disabled = false;
-        els.start.disabled = true;
-        const now = performance.now();
-        endAt = now + 60_000; // 60s
-        updateUI(60);
-        cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(tick);
+        running = true; count = 0; els.result.textContent = '';
+        els.tap.disabled = false; els.start.disabled = true;
+        const now = performance.now(); endAt = now + 60_000; // 60s
+        updateUI(60); cancelAnimationFrame(rafId); rafId = requestAnimationFrame(tick);
     }
 
     async function startTimer() {
         if (running || priming) return;
-        // Lazy-init audio context on user gesture
         if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }
         els.result.textContent = '';
         if (countdownEnabled) {
-            priming = true;
-            els.tap.disabled = true;
+            priming = true; els.tap.disabled = true;
             for (let i = 3; i >= 1; i--) {
                 els.time.textContent = `00:0${i}.0`;
                 els.bar.style.transform = `scaleX(${i/3})`;
                 if (beepEnabled) beep(660, 120);
                 if (navigator.vibrate) navigator.vibrate(20);
-                // wait ~1s
                 await new Promise(r => setTimeout(r, 950));
             }
-            priming = false;
-            if (beepEnabled) beep(880, 200);
+            priming = false; if (beepEnabled) beep(880, 200);
         }
         beginRun();
     }
 
     function resetAll() {
         running = false; priming = false; count = 0; cancelAnimationFrame(rafId); endAt = 0;
-        updateUI(60);
-        els.result.textContent = '';
+        updateUI(60); els.result.textContent = '';
         els.tap.disabled = true; els.start.disabled = false;
     }
 
@@ -200,25 +185,22 @@
     function decCount() { if ((!running && !priming) || count === 0) return; count--; els.count.textContent = String(count); updateUI((endAt - performance.now())/1000); }
 
     // --- Events ---
-    els.tap.addEventListener('pointerdown', (e) => {
-        if (!running) return; if (e.pointerType === 'mouse' && e.button !== 0) return; incCount();
-    }, { passive: true });
+    const onPrimary = (fn) => (e) => { if (e.pointerType === 'mouse' && e.button !== 0) return; fn(e); };
 
-    els.start.addEventListener('click', startTimer);
-    els.reset.addEventListener('click', resetAll);
-    els.undo.addEventListener('click', decCount);
-
-    els.sound.addEventListener('click', () => {
+    els.tap.addEventListener('pointerdown', onPrimary(incCount), { passive: true });
+    els.start.addEventListener('pointerdown', onPrimary(startTimer));
+    els.reset.addEventListener('pointerdown', onPrimary(resetAll));
+    els.undo.addEventListener('pointerdown', onPrimary(decCount));
+    els.sound.addEventListener('pointerdown', onPrimary(() => {
         beepEnabled = !beepEnabled; els.sound.textContent = `Sound: ${beepEnabled ? 'On' : 'Off'}`;
         if (beepEnabled && !audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }
-    });
-
-    els.countdown.addEventListener('click', () => {
+    }));
+    els.countdown.addEventListener('pointerdown', onPrimary(() => {
         countdownEnabled = !countdownEnabled;
         els.countdown.textContent = `3s Countdown: ${countdownEnabled ? 'On' : 'Off'}`;
-    });
+    }));
 
-    // Keyboard: Space to count, - to undo
+    // Keyboard: Space to count, - to undo, Enter to start
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') { e.preventDefault(); incCount(); }
         if (e.key === '-' || e.key === '_') { e.preventDefault(); decCount(); }
