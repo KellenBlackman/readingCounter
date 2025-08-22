@@ -66,11 +66,12 @@
             <button id="undo" class="small" disabled>−1</button>
             <button id="reset" class="small">Reset</button>
             <button id="sound" class="small">Sound: On</button>
+            <button id="resetBest" class="small danger">Reset Best</button>
         </div>
 
         <div class="row">
             <button id="countdown" class="small">3s Countdown: On</button>
-            <div class="hint">Result shows at the end. Phone will beep.</div>
+            <div class="hint">Result shows at the end. Phone will beep. Best WPM is saved on this device; use “Reset Best” to clear.</div>
         </div>
 
         <div id="result" class="result"></div>
@@ -99,6 +100,7 @@
         undo: document.getElementById('undo'),
         reset: document.getElementById('reset'),
         sound: document.getElementById('sound'),
+        resetBest: document.getElementById('resetBest'),
         countdown: document.getElementById('countdown'),
         result: document.getElementById('result'),
     };
@@ -109,6 +111,10 @@
         const m = Math.floor(total / 60);
         const s = total % 60;
         return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    function remainingSeconds() {
+        return Math.max(0, (endAt - performance.now()) / 1000);
     }
 
     function updateUI(remaining) {
@@ -134,8 +140,7 @@
     }
 
     function tick() {
-        const now = performance.now();
-        const remaining = (endAt - now) / 1000;
+        const remaining = remainingSeconds();
         if (remaining <= 0) { finish(); return; }
         updateUI(remaining);
         rafId = requestAnimationFrame(tick);
@@ -181,8 +186,15 @@
         osc.connect(gain).connect(audioCtx.destination); osc.start(now); osc.stop(now + (dur/1000));
     }
 
-    function incCount() { if (!running) return; count++; els.count.textContent = String(count); if (navigator.vibrate) navigator.vibrate(10); updateUI((endAt - performance.now())/1000); }
-    function decCount() { if ((!running && !priming) || count === 0) return; count--; els.count.textContent = String(count); updateUI((endAt - performance.now())/1000); }
+    function incCount() {
+        if (!running) return; count++; els.count.textContent = String(count);
+        if (navigator.vibrate) navigator.vibrate(10); updateUI(remainingSeconds());
+    }
+
+    function decCount() {
+        if ((!running && !priming) || count === 0) return; count--; els.count.textContent = String(count);
+        updateUI(remainingSeconds());
+    }
 
     // --- Events ---
     const onPrimary = (fn) => (e) => { if (e.pointerType === 'mouse' && e.button !== 0) return; fn(e); };
@@ -191,10 +203,22 @@
     els.start.addEventListener('pointerdown', onPrimary(startTimer));
     els.reset.addEventListener('pointerdown', onPrimary(resetAll));
     els.undo.addEventListener('pointerdown', onPrimary(decCount));
+
     els.sound.addEventListener('pointerdown', onPrimary(() => {
         beepEnabled = !beepEnabled; els.sound.textContent = `Sound: ${beepEnabled ? 'On' : 'Off'}`;
         if (beepEnabled && !audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }
     }));
+
+    // Reset Best WPM (local to this device)
+    els.resetBest.addEventListener('pointerdown', onPrimary(() => {
+        const ok = confirm('Reset best WPM on this device?');
+        if (!ok) return;
+        localStorage.removeItem('rc_best');
+        bestWpm = 0;
+        updateUI(running ? remainingSeconds() : 60);
+        els.result.textContent = 'Best WPM reset.';
+    }));
+
     els.countdown.addEventListener('pointerdown', onPrimary(() => {
         countdownEnabled = !countdownEnabled;
         els.countdown.textContent = `3s Countdown: ${countdownEnabled ? 'On' : 'Off'}`;
