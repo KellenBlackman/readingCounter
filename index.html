@@ -1,231 +1,232 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>One‑Minute Tap Counter</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --card: #141a2f;
-      --text: #e6e8ef;
-      --muted: #8f98b7;
-      --accent: #5eead4;
-      --danger: #f87171;
-    }
-    html, body { height: 100%; }
-    body {
-      margin: 0; font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 50% -10%, #1b2341 0%, var(--bg) 60%);
-      color: var(--text);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .wrap { min-height: 100%; display: grid; place-items: center; padding: 16px; }
-    .card {
-      width: min(720px, 100%);
-      background: color-mix(in hsl, var(--card), black 8%);
-      border: 1px solid color-mix(in hsl, var(--card), white 8%);
-      border-radius: 20px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-    h1 { margin: 6px 0 10px; font-size: 22px; font-weight: 700; letter-spacing: .2px; }
-    .grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
-    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; }
-    .pill { background: #1d2546; border: 1px solid #2a3566; padding: 10px 12px; border-radius: 12px; min-width: 80px; text-align: center; }
-    .time { font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 800; }
-    .count { font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 800; }
-    .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
-    .tap {
-      margin-top: 12px; width: 100%; height: 46vh; min-height: 260px; touch-action: manipulation;
-      border: none; border-radius: 18px; background: linear-gradient(180deg, #1e2649, #121735);
-      color: var(--text); font-size: clamp(28px, 6vw, 42px); font-weight: 900;
-      letter-spacing: .3px; box-shadow: inset 0 0 0 1px #2a3566, 0 10px 24px rgba(0,0,0,.4);
-      transition: transform .02s ease, filter .2s ease, opacity .2s ease;
-    }
-    .tap:active { transform: scale(.995); }
-    .tap[disabled] { opacity: .35; }
-    .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
-    button.small {
-      border: 1px solid #2a3566; background: #1b2345; color: var(--text);
-      padding: 12px; border-radius: 12px; font-weight: 700; letter-spacing: .2px;
-    }
-    button.small.primary { border-color: color-mix(in hsl, var(--accent), white 15%); background: color-mix(in hsl, #0e1d28, var(--accent) 20%); }
-    button.small.danger { border-color: color-mix(in hsl, var(--danger), white 15%); background: color-mix(in hsl, #281015, var(--danger) 18%); }
-
-    .result { margin-top: 10px; text-align: center; color: var(--muted); font-size: 14px; min-height: 22px; }
-    .ring { position: relative; height: 10px; background: #1a2141; border-radius: 999px; overflow: hidden; }
-    .bar { position: absolute; inset: 0; width: 100%; transform-origin: left; background: linear-gradient(90deg, var(--accent), #60a5fa); }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Reading Counter</title>
+    <meta name="theme-color" content="#0b1020">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- simple emoji favicon so it looks app-y without extra files -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E%F0%9F%93%96%3C/text%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg: #0b1020; --card: #141a2f; --text: #e6e8ef; --muted: #8f98b7; --accent: #5eead4; --danger: #f87171;
+        }
+        html, body { height: 100%; }
+        body { margin: 0; font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: radial-gradient(1200px 800px at 50% -10%, #1b2341 0%, var(--bg) 60%); color: var(--text); -webkit-tap-highlight-color: transparent; }
+        .wrap { min-height: 100%; display: grid; place-items: center; padding: 16px; }
+        .card { width: min(720px, 100%); background: color-mix(in hsl, var(--card), black 8%); border: 1px solid color-mix(in hsl, var(--card), white 8%); border-radius: 20px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+        h1 { margin: 6px 0 2px; font-size: 22px; font-weight: 800; letter-spacing: .2px; }
+        .tag { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+        .grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr 1fr; }
+        .pill { background: #1d2546; border: 1px solid #2a3566; padding: 10px 12px; border-radius: 12px; min-width: 90px; text-align: center; }
+        .time, .count, .best { font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 800; }
+        .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+        .ring { position: relative; height: 10px; background: #1a2141; border-radius: 999px; overflow: hidden; }
+        .bar { position: absolute; inset: 0; width: 100%; transform-origin: left; background: linear-gradient(90deg, var(--accent), #60a5fa); }
+        .tap { margin-top: 12px; width: 100%; height: 46vh; min-height: 260px; touch-action: manipulation; border: none; border-radius: 18px; background: linear-gradient(180deg, #1e2649, #121735); color: var(--text); font-size: clamp(28px, 6vw, 42px); font-weight: 900; letter-spacing: .3px; box-shadow: inset 0 0 0 1px #2a3566, 0 10px 24px rgba(0,0,0,.4); transition: transform .02s ease, filter .2s ease, opacity .2s ease; }
+        .tap:active { transform: scale(.995); }
+        .tap[disabled] { opacity: .35; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+        button.small { border: 1px solid #2a3566; background: #1b2345; color: var(--text); padding: 12px; border-radius: 12px; font-weight: 700; letter-spacing: .2px; }
+        button.small.primary { border-color: color-mix(in hsl, var(--accent), white 15%); background: color-mix(in hsl, #0e1d28, var(--accent) 20%); }
+        button.small.danger { border-color: color-mix(in hsl, var(--danger), white 15%); background: color-mix(in hsl, #281015, var(--danger) 18%); }
+        .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-top: 8px; }
+        .result { margin-top: 10px; text-align: center; color: var(--muted); font-size: 14px; min-height: 22px; }
+        .hint { text-align: center; color: var(--muted); font-size: 12px; }
+    </style>
 </head>
 <body>
-  <div class="wrap">
+<div class="wrap">
     <div class="card">
-      <h1>One‑Minute Tap Counter</h1>
+        <h1>Reading Counter</h1>
+        <div class="tag">Tap once per word. Spacebar works on a keyboard.</div>
 
-      <div class="grid">
-        <div>
-          <div class="pill">
-            <div class="time" id="time">01:00.0</div>
-            <div class="sub">time remaining</div>
-          </div>
+        <div class="grid" role="group" aria-label="Status">
+            <div class="pill" aria-live="polite">
+                <div class="time" id="time">01:00.0</div>
+                <div class="sub">time remaining</div>
+            </div>
+            <div class="pill">
+                <div class="count" id="count">0</div>
+                <div class="sub">words this minute</div>
+            </div>
+            <div class="pill">
+                <div class="best" id="best">—</div>
+                <div class="sub">best WPM</div>
+            </div>
         </div>
-        <div>
-          <div class="pill">
-            <div class="count" id="count">0</div>
-            <div class="sub">taps</div>
-          </div>
+
+        <div class="ring" aria-hidden="true"><div class="bar" id="bar" style="transform:scaleX(1)"></div></div>
+
+        <button id="tap" class="tap" disabled aria-label="Tap for each word">Tap for each word</button>
+
+        <div class="controls">
+            <button id="start" class="small primary">Start</button>
+            <button id="undo" class="small" disabled>−1</button>
+            <button id="reset" class="small">Reset</button>
+            <button id="sound" class="small">Sound: On</button>
         </div>
-      </div>
 
-      <div class="ring" aria-hidden="true"><div class="bar" id="bar" style="transform:scaleX(1)"></div></div>
+        <div class="row">
+            <button id="countdown" class="small">3s Countdown: On</button>
+            <div class="hint">Result shows at the end. Phone will beep and vibrate.</div>
+        </div>
 
-      <button id="tap" class="tap" disabled>Tap!</button>
-
-      <div class="controls">
-        <button id="start" class="small primary">Start</button>
-        <button id="reset" class="small">Reset</button>
-        <button id="sound" class="small">Sound: On</button>
-      </div>
-
-      <div id="result" class="result"></div>
+        <div id="result" class="result"></div>
     </div>
-  </div>
+</div>
 
-  <script>
-    // State
-    let running = false;
+<script>
+    // --- State ---
+    let running = false;      // true during the 60s run
+    let priming = false;      // true during 3s countdown
     let count = 0;
     let endAt = 0;
     let rafId = null;
     let beepEnabled = true;
     let audioCtx = null;
+    let countdownEnabled = true;
+    let bestWpm = Number(localStorage.getItem('rc_best')) || 0;
 
     const els = {
-      time: document.getElementById('time'),
-      count: document.getElementById('count'),
-      bar: document.getElementById('bar'),
-      tap: document.getElementById('tap'),
-      start: document.getElementById('start'),
-      reset: document.getElementById('reset'),
-      sound: document.getElementById('sound'),
-      result: document.getElementById('result'),
+        time: document.getElementById('time'),
+        count: document.getElementById('count'),
+        best: document.getElementById('best'),
+        bar: document.getElementById('bar'),
+        tap: document.getElementById('tap'),
+        start: document.getElementById('start'),
+        undo: document.getElementById('undo'),
+        reset: document.getElementById('reset'),
+        sound: document.getElementById('sound'),
+        countdown: document.getElementById('countdown'),
+        result: document.getElementById('result'),
     };
 
     function fmt(sec) {
-      const clamped = Math.max(0, sec);
-      const m = Math.floor(clamped / 60);
-      const s = Math.floor(clamped % 60);
-      const tenths = Math.floor((clamped - Math.floor(clamped)) * 10);
-      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${tenths}`;
+        const clamped = Math.max(0, sec);
+        const m = Math.floor(clamped / 60);
+        const s = Math.floor(clamped % 60);
+        const tenths = Math.floor((clamped - Math.floor(clamped)) * 10);
+        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${tenths}`;
     }
 
     function updateUI(remaining) {
-      els.time.textContent = fmt(remaining);
-      const pct = Math.max(0, Math.min(1, remaining / 60));
-      els.bar.style.transform = `scaleX(${pct})`;
-      els.count.textContent = String(count);
+        els.time.textContent = fmt(remaining);
+        const pct = Math.max(0, Math.min(1, remaining / 60));
+        els.bar.style.transform = `scaleX(${pct})`;
+        els.count.textContent = String(count);
+        els.best.textContent = bestWpm ? String(bestWpm) : '—';
+        els.undo.disabled = (!running && !priming) || count === 0;
     }
 
     function finish() {
-      running = false;
-      cancelAnimationFrame(rafId);
-      els.tap.disabled = true;
-      els.start.disabled = false;
-      // Summary
-      const cps = (count / 60).toFixed(2);
-      els.result.textContent = `Result: ${count} taps in 60s (${cps} / sec)`;
-      if (beepEnabled) {
-        beep();
-      }
-      if (navigator.vibrate) {
-        navigator.vibrate([180, 100, 180]);
-      }
+        running = false;
+        cancelAnimationFrame(rafId);
+        els.tap.disabled = true;
+        els.start.disabled = false;
+        const wpm = count; // 60s window, so count == WPM
+        if (wpm > bestWpm) {
+            bestWpm = wpm;
+            localStorage.setItem('rc_best', String(bestWpm));
+        }
+        els.result.textContent = `Result: ${wpm} WPM (words read: ${count})`;
+        updateUI(0);
+        if (beepEnabled) beep(880, 400);
+        if (navigator.vibrate) navigator.vibrate([180, 100, 180]);
     }
 
     function tick() {
-      const now = performance.now();
-      const remaining = (endAt - now) / 1000;
-      if (remaining <= 0) {
-        updateUI(0);
-        finish();
-        return;
-      }
-      updateUI(remaining);
-      rafId = requestAnimationFrame(tick);
+        const now = performance.now();
+        const remaining = (endAt - now) / 1000;
+        if (remaining <= 0) { finish(); return; }
+        updateUI(remaining);
+        rafId = requestAnimationFrame(tick);
     }
 
-    function startTimer() {
-      if (running) return;
-      // Lazy-init audio context on user gesture
-      if (!audioCtx) {
-        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
-      }
-      running = true;
-      count = 0;
-      els.result.textContent = '';
-      els.tap.disabled = false;
-      els.start.disabled = true;
-      const now = performance.now();
-      endAt = now + 60_000; // 60s from now
-      updateUI(60);
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(tick);
+    function beginRun() {
+        running = true;
+        count = 0;
+        els.result.textContent = '';
+        els.tap.disabled = false;
+        els.start.disabled = true;
+        const now = performance.now();
+        endAt = now + 60_000; // 60s
+        updateUI(60);
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(tick);
+    }
+
+    async function startTimer() {
+        if (running || priming) return;
+        // Lazy-init audio context on user gesture
+        if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }
+        els.result.textContent = '';
+        if (countdownEnabled) {
+            priming = true;
+            els.tap.disabled = true;
+            for (let i = 3; i >= 1; i--) {
+                els.time.textContent = `00:0${i}.0`;
+                els.bar.style.transform = `scaleX(${i/3})`;
+                if (beepEnabled) beep(660, 120);
+                if (navigator.vibrate) navigator.vibrate(20);
+                // wait ~1s
+                await new Promise(r => setTimeout(r, 950));
+            }
+            priming = false;
+            if (beepEnabled) beep(880, 200);
+        }
+        beginRun();
     }
 
     function resetAll() {
-      running = false;
-      count = 0;
-      cancelAnimationFrame(rafId);
-      endAt = 0;
-      updateUI(60);
-      els.result.textContent = '';
-      els.tap.disabled = true;
-      els.start.disabled = false;
+        running = false; priming = false; count = 0; cancelAnimationFrame(rafId); endAt = 0;
+        updateUI(60);
+        els.result.textContent = '';
+        els.tap.disabled = true; els.start.disabled = false;
     }
 
-    function beep() {
-      // Web Audio beep with quick envelope; requires gesture-unlocked context
-      if (!audioCtx) return;
-      const dur = 0.35; // seconds
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = 880; // A5
-      const now = audioCtx.currentTime;
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.15, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-      osc.connect(gain).connect(audioCtx.destination);
-      osc.start(now);
-      osc.stop(now + dur);
+    function beep(freq = 880, dur = 350) {
+        if (!audioCtx) return; const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq; gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + (dur/1000));
+        osc.connect(gain).connect(audioCtx.destination); osc.start(now); osc.stop(now + (dur/1000));
     }
 
-    // Events
+    function incCount() { if (!running) return; count++; els.count.textContent = String(count); if (navigator.vibrate) navigator.vibrate(10); updateUI((endAt - performance.now())/1000); }
+    function decCount() { if ((!running && !priming) || count === 0) return; count--; els.count.textContent = String(count); updateUI((endAt - performance.now())/1000); }
+
+    // --- Events ---
     els.tap.addEventListener('pointerdown', (e) => {
-      if (!running) return;
-      // Avoid right-click/secondary pointers
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      count++;
-      els.count.textContent = String(count);
-      // Minor haptic on tap (Android)
-      if (navigator.vibrate) navigator.vibrate(10);
+        if (!running) return; if (e.pointerType === 'mouse' && e.button !== 0) return; incCount();
     }, { passive: true });
 
     els.start.addEventListener('click', startTimer);
     els.reset.addEventListener('click', resetAll);
+    els.undo.addEventListener('click', decCount);
+
     els.sound.addEventListener('click', () => {
-      beepEnabled = !beepEnabled;
-      els.sound.textContent = `Sound: ${beepEnabled ? 'On' : 'Off'}`;
-      if (beepEnabled) {
-        // prime audio on user gesture
-        if (!audioCtx) {
-          try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
-        }
-      }
+        beepEnabled = !beepEnabled; els.sound.textContent = `Sound: ${beepEnabled ? 'On' : 'Off'}`;
+        if (beepEnabled && !audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }
     });
 
-    // Initialize defaults
-    resetAll();
-  </script>
+    els.countdown.addEventListener('click', () => {
+        countdownEnabled = !countdownEnabled;
+        els.countdown.textContent = `3s Countdown: ${countdownEnabled ? 'On' : 'Off'}`;
+    });
+
+    // Keyboard: Space to count, - to undo
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') { e.preventDefault(); incCount(); }
+        if (e.key === '-' || e.key === '_') { e.preventDefault(); decCount(); }
+        if ((e.key === 'Enter' || e.key === 'Return') && !running) { e.preventDefault(); startTimer(); }
+    });
+
+    // Initialize
+    updateUI(60);
+</script>
 </body>
 </html>
-
